@@ -8,6 +8,10 @@ export default function Messages(props) {
 
   const [editMessage, setEditMessage] = useState("");
 
+  const [isReplying, setIsReplying] = useState(false);
+
+  const [reply, setReply] = useState("");
+
   const handleDeleteMessage = async (messageId) => {
     const res = await fetch(`${API}/message/${messageId}`, {
       method: "DELETE",
@@ -49,6 +53,26 @@ export default function Messages(props) {
     }
   };
 
+  const handleReplyMessage = async (e) => {
+    e.preventDefault();
+    const res = await fetch(`${API}/messages`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        text: reply,
+        parentId: messages.id,
+      }),
+    });
+    const info = await res.json();
+    if (info.success) {
+      setIsReplying(false);
+      setReply("");
+      fetchMessages();
+    }
+  };
+
   return (
     <div className="message-box">
       <div className="content">
@@ -66,18 +90,19 @@ export default function Messages(props) {
         </p>
         {isEditing && (
           <div>
-            <form onSubmit={handleEditMessage}>
+            <form className="edit-form" onSubmit={handleEditMessage}>
               <input
                 value={editMessage}
                 onChange={(e) => setEditMessage(e.target.value)}
                 placeholder="Edit Message"
               />
-              <button>Edit Message</button>
+              <button className="edit-btn">Edit Message</button>
               <button
                 onClick={(e) => {
                   e.preventDefault();
                   setIsEditing(false);
                 }}
+                className="cancel-btn"
               >
                 Cancel
               </button>
@@ -85,7 +110,41 @@ export default function Messages(props) {
           </div>
         )}
         <div className="icon-container">
-          <button className="icon">↩️</button>
+          <button
+            className="icon"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsReplying(true);
+            }}
+          >
+            ↩️
+          </button>
+          {isReplying && (
+            <div>
+              <form
+                className="reply-form"
+                onSubmit={(e) => {
+                  handleReplyMessage(e);
+                }}
+              >
+                <input
+                  value={reply}
+                  onChange={(e) => setReply(e.target.value)}
+                  placeholder="Write a reply"
+                />
+                <button className="reply-btn">Reply</button>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsReplying(false);
+                  }}
+                  className="cancel-btn"
+                >
+                  Cancel
+                </button>
+              </form>
+            </div>
+          )}
           <button className="icon" onClick={() => handleLikeMessage(messages)}>
             {" "}
             👍

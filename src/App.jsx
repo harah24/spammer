@@ -1,7 +1,7 @@
 import "./App.css";
 import { useEffect, useState } from "react";
 import { API } from "./api";
-import Messages from "./components/Messages";
+import Message from "./components/Message";
 import NewMessage from "./components/NewMessage";
 
 function App() {
@@ -17,7 +17,6 @@ function App() {
     fetchMessages();
   }, []);
 
-  console.log(messages);
   return (
     <>
       <h1>Spammer</h1>
@@ -25,7 +24,7 @@ function App() {
       <NewMessage fetchMessages={fetchMessages} />
 
       {messages.map((message) => (
-        <Messages
+        <Message
           key={message.id}
           messages={message}
           fetchMessages={fetchMessages}

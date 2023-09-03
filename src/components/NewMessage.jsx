@@ -21,19 +21,22 @@ export default function NewMessage(props) {
     const info = await res.json();
     if (info.success) {
       fetchMessages();
+      setInputMessage("");
     }
   };
 
   return (
     <>
-      <form onSubmit={handleNewMessage}>
+      <form className="main-form" onSubmit={handleNewMessage}>
         <input
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
           type="text"
-          placeholder="What's your message?"
+          placeholder="Write a message"
         />
-        <button type="submit">Post Message</button>
+        <button className="post-btn" type="submit">
+          Post Message
+        </button>
       </form>
     </>
   );
